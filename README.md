@@ -95,53 +95,6 @@ function MyForm() {
 
 **90% less code. 100% more features. TypeScript included. 🎯**
 
-## 🚀 The New Way (bindit Magic)
-
-```tsx
-// ✨ One store, one hook, zero pain
-import { useBindingStore, useBind, validators } from '@bindit/react';
-
-function MyForm() {
-  const store = useBindingStore({
-    name: '', email: '', age: 18, agreed: false, country: 'US', theme: 'light'
-  });
-  
-  // One hook handles everything!
-  const name = useBind(store, 'name', { validate: validators.required });
-  const email = useBind(store, 'email', { validate: validators.email });
-  const age = useBind(store, 'age');
-  const agreed = useBind(store, 'agreed');
-  const country = useBind(store, 'country');
-  const theme = useBind(store, 'theme');
-
-  return (
-    <form onSubmit={(e) => { 
-      e.preventDefault(); 
-      console.log(store.getState()); 
-    }}>
-      <input {...name.input} />
-      {name.error && <div>{name.error}</div>}
-      
-      <input {...email.input} type="email" />
-      {email.error && <div>{email.error}</div>}
-      
-      <input {...age.input} type="number" />
-      <input type="checkbox" {...agreed.checkbox} />
-      
-      <select {...country.select}>
-        <option value="US">United States</option>
-        <option value="CA">Canada</option>
-      </select>
-      
-      <input type="radio" {...theme.radio('light')} />
-      <input type="radio" {...theme.radio('dark')} />
-    </form>
-  );
-}
-```
-
-**90% less code. 100% more features. TypeScript included. 🎯**
-
 ## 🎯 More Examples (Because Examples > Words)
 
 ### Different Validation Timing
