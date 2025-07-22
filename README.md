@@ -10,22 +10,13 @@
 npm install bindit-react bindit-core
 ```
 
-## 😤 The Old Way vs 🚀 The New Way
-
-<table>
-<tr>
-<td width="50%">
-
-### 😵‍💫 React State Hell
+## 😤 The Old Way (React State Hell)
 
 ```tsx
-// Multiple useState calls, scattered logic
+// 😵‍💫 Multiple useState calls, scattered logic, lots of boilerplate
 function MyForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [age, setAge] = useState(18);
-  const [agreed, setAgreed] = useState(false);
-  
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [touched, setTouched] = useState({});
@@ -39,32 +30,17 @@ function MyForm() {
     return true;
   };
   
-  const validateEmail = (value) => {
-    if (!value.includes('@')) {
-      setEmailError('Invalid email');
-      return false;
-    }
-    setEmailError('');
-    return true;
-  };
-  
   const handleNameChange = (e) => {
     const value = e.target.value;
     setName(value);
     if (touched.name) validateName(value);
   };
   
-  const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (touched.email) validateEmail(value);
-  };
-  
   const handleSubmit = (e) => {
     e.preventDefault();
     setTouched({ name: true, email: true });
     if (validateName(name) && validateEmail(email)) {
-      console.log({ name, email, age, agreed });
+      console.log({ name, email });
     }
   };
 
@@ -73,69 +49,34 @@ function MyForm() {
       <input 
         value={name}
         onChange={handleNameChange}
-        onBlur={() => setTouched(prev => ({ 
-          ...prev, name: true 
-        }))}
-        style={{ 
-          borderColor: touched.name && nameError ? 'red' : '' 
-        }}
+        onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+        style={{ borderColor: touched.name && nameError ? 'red' : '' }}
       />
       {touched.name && nameError && <div>{nameError}</div>}
       
       <input 
         value={email}
-        onChange={handleEmailChange}
-        onBlur={() => setTouched(prev => ({ 
-          ...prev, email: true 
-        }))}
-        style={{ 
-          borderColor: touched.email && emailError ? 'red' : '' 
-        }}
+        onChange={(e) => setEmail(e.target.value)}
+        // ... more validation logic
       />
       {touched.email && emailError && <div>{emailError}</div>}
-      
-      <input 
-        type="number"
-        value={age}
-        onChange={(e) => setAge(Number(e.target.value))}
-      />
-      
-      <input 
-        type="checkbox"
-        checked={agreed}
-        onChange={(e) => setAgreed(e.target.checked)}
-      />
     </form>
   );
 }
 ```
 
-</td>
-<td width="50%">
-
-### ✨ bindit Magic
+## 🚀 The New Way (bindit Magic)
 
 ```tsx
-// One store, one hook, zero pain
+// ✨ One store, one hook, zero pain
 import { useBindingStore, useBind, validators } from 'bindit-react';
 
 function MyForm() {
-  const store = useBindingStore({
-    name: '', 
-    email: '', 
-    age: 18, 
-    agreed: false
-  });
+  const store = useBindingStore({ name: '', email: '' });
   
   // One hook handles everything!
-  const name = useBind(store, 'name', { 
-    validate: validators.required 
-  });
-  const email = useBind(store, 'email', { 
-    validate: validators.email 
-  });
-  const age = useBind(store, 'age');
-  const agreed = useBind(store, 'agreed');
+  const name = useBind(store, 'name', { validate: validators.required });
+  const email = useBind(store, 'email', { validate: validators.email });
 
   return (
     <form onSubmit={(e) => { 
@@ -147,19 +88,12 @@ function MyForm() {
       
       <input {...email.input} type="email" />
       {email.error && <div>{email.error}</div>}
-      
-      <input {...age.input} type="number" />
-      <input type="checkbox" {...agreed.checkbox} />
     </form>
   );
 }
 ```
 
 **90% less code. 100% more features. TypeScript included. 🎯**
-
-</td>
-</tr>
-</table>
 
 ## 🚀 The New Way (bindit Magic)
 
