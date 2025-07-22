@@ -1,17 +1,17 @@
-# @bindit/core
+# bindit-core
 
 Framework-agnostic two-way data binding engine.
 
 ## Installation
 
 ```bash
-npm install @bindit/core
+npm install bindit-core
 ```
 
 ## Usage
 
 ```typescript
-import { BindingStore } from '@bindit/core';
+import { BindingStore } from 'bindit-core';
 
 const store = new BindingStore({ name: '', email: '' });
 

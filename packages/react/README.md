@@ -1,17 +1,17 @@
-# @bindit/react
+# bindit-react
 
 React hooks for bindit two-way data binding.
 
 ## Installation
 
 ```bash
-npm install @bindit/react @bindit/core
+npm install bindit-react bindit-core
 ```
 
 ## Quick Start
 
 ```tsx
-import { useBindingStore, useBind } from '@bindit/react';
+import { useBindingStore, useBind } from 'bindit-react';
 
 function MyForm() {
   const store = useBindingStore({ name: '', email: '' });

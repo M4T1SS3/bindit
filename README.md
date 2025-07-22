@@ -4,23 +4,27 @@
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-green.svg)](https://reactjs.org/)
-[![Size](https://img.shields.io/badge/Size-<3KB-success.svg)](#)
+[![Size](https://img.shields.io/badge/Size-5KB-success.svg)](#)
 
 ```bash
-npm install @bindit/react @bindit/core
+npm install bindit-react bindit-core
 ```
 
-## 😤 The Old Way (React State Hell)
+## 😤 The Old Way vs 🚀 The New Way
+
+<table>
+<tr>
+<td width="50%">
+
+### 😵‍💫 React State Hell
 
 ```tsx
-// 😵‍💫 Multiple useState calls, scattered logic, lots of boilerplate
+// Multiple useState calls, scattered logic
 function MyForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [age, setAge] = useState(18);
   const [agreed, setAgreed] = useState(false);
-  const [country, setCountry] = useState('US');
-  const [theme, setTheme] = useState('light');
   
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -60,7 +64,7 @@ function MyForm() {
     e.preventDefault();
     setTouched({ name: true, email: true });
     if (validateName(name) && validateEmail(email)) {
-      console.log({ name, email, age, agreed, country, theme });
+      console.log({ name, email, age, agreed });
     }
   };
 
@@ -69,16 +73,24 @@ function MyForm() {
       <input 
         value={name}
         onChange={handleNameChange}
-        onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
-        style={{ borderColor: touched.name && nameError ? 'red' : '' }}
+        onBlur={() => setTouched(prev => ({ 
+          ...prev, name: true 
+        }))}
+        style={{ 
+          borderColor: touched.name && nameError ? 'red' : '' 
+        }}
       />
       {touched.name && nameError && <div>{nameError}</div>}
       
       <input 
         value={email}
         onChange={handleEmailChange}
-        onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
-        style={{ borderColor: touched.email && emailError ? 'red' : '' }}
+        onBlur={() => setTouched(prev => ({ 
+          ...prev, email: true 
+        }))}
+        style={{ 
+          borderColor: touched.email && emailError ? 'red' : '' 
+        }}
       />
       {touched.email && emailError && <div>{emailError}</div>}
       
@@ -93,26 +105,61 @@ function MyForm() {
         checked={agreed}
         onChange={(e) => setAgreed(e.target.checked)}
       />
-      
-      <select value={country} onChange={(e) => setCountry(e.target.value)}>
-        <option value="US">United States</option>
-        <option value="CA">Canada</option>
-      </select>
-      
-      <input 
-        type="radio" 
-        checked={theme === 'light'} 
-        onChange={() => setTheme('light')} 
-      />
-      <input 
-        type="radio" 
-        checked={theme === 'dark'} 
-        onChange={() => setTheme('dark')} 
-      />
     </form>
   );
 }
 ```
+
+</td>
+<td width="50%">
+
+### ✨ bindit Magic
+
+```tsx
+// One store, one hook, zero pain
+import { useBindingStore, useBind, validators } from 'bindit-react';
+
+function MyForm() {
+  const store = useBindingStore({
+    name: '', 
+    email: '', 
+    age: 18, 
+    agreed: false
+  });
+  
+  // One hook handles everything!
+  const name = useBind(store, 'name', { 
+    validate: validators.required 
+  });
+  const email = useBind(store, 'email', { 
+    validate: validators.email 
+  });
+  const age = useBind(store, 'age');
+  const agreed = useBind(store, 'agreed');
+
+  return (
+    <form onSubmit={(e) => { 
+      e.preventDefault(); 
+      console.log(store.getState()); 
+    }}>
+      <input {...name.input} />
+      {name.error && <div>{name.error}</div>}
+      
+      <input {...email.input} type="email" />
+      {email.error && <div>{email.error}</div>}
+      
+      <input {...age.input} type="number" />
+      <input type="checkbox" {...agreed.checkbox} />
+    </form>
+  );
+}
+```
+
+**90% less code. 100% more features. TypeScript included. 🎯**
+
+</td>
+</tr>
+</table>
 
 ## 🚀 The New Way (bindit Magic)
 
@@ -259,7 +306,7 @@ const name = useBind(store, 'name');
 - **Performance**: Only re-renders what changed
 - **Validation**: Smart timing (touch, change, submit)
 - **Edge cases**: IME, rapid typing, cursor position - all handled
-- **Bundle size**: 5KB total
+- **Bundle size**: 5.0KB total
 
 ### Available Validators
 ```tsx
@@ -282,8 +329,8 @@ transformers.toUpperCase  // Convert to uppercase
 ## 📦 Bundle Size
 | Package | Size (gzipped) |
 |---------|------|
-| `@bindit/core` | 1.6KB |
-| `@bindit/react` | 3.4KB |
+| `bindit-core` | 1.6KB |
+| `bindit-react` | 3.4KB |
 | **Total** | **5.0KB** |
 
 ---
