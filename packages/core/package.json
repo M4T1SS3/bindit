@@ -1,5 +1,5 @@
 {
-  "name": "@bindit/core",
+  "name": "bindit-core",
   "version": "1.0.0",
   "description": "Framework-agnostic two-way data binding engine",
   "type": "module",

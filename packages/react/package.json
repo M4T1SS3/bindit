@@ -1,5 +1,5 @@
 {
-  "name": "@bindit/react",
+  "name": "bindit-react",
   "version": "1.0.0",
   "description": "React hooks and components for bindit two-way data binding",
   "type": "module",
@@ -45,7 +45,7 @@
     "url": "https://github.com/M4T1SS3/bindit/issues"
   },
   "dependencies": {
-    "@bindit/core": "^1.0.0"
+    "bindit-core": "^1.0.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
