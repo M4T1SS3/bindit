@@ -277,5 +277,82 @@ export const validators = {
    */
   range: (min: number, max: number) => (value: number): boolean | string => {
     return (value >= min && value <= max) || `Must be between ${min} and ${max}`;
+  },
+  
+  /**
+   * Validate with custom regex pattern
+   */
+  pattern: (regex: RegExp, message?: string) => (value: string): boolean | string => {
+    return regex.test(value) || message || 'Invalid format';
+  }
+};
+
+/**
+ * Helper functions for creating custom validators
+ */
+export const createValidator = {
+  /**
+   * Combine multiple validators with AND logic
+   */
+  all: <T>(...validators: BindingValidator<T>[]): BindingValidator<T> => {
+    return (value: T) => {
+      for (const validator of validators) {
+        const result = validator(value);
+        if (result !== true) {
+          return result;
+        }
+      }
+      return true;
+    };
+  },
+  
+  /**
+   * Combine multiple validators with OR logic (passes if any validator passes)
+   */
+  any: <T>(...validators: BindingValidator<T>[]): BindingValidator<T> => {
+    return (value: T) => {
+      const errors: string[] = [];
+      for (const validator of validators) {
+        const result = validator(value);
+        if (result === true) {
+          return true;
+        }
+        if (typeof result === 'string') {
+          errors.push(result);
+        }
+      }
+      return errors.length > 0 ? errors.join(' or ') : false;
+    };
+  },
+  
+  /**
+   * Create a conditional validator that only validates when condition is met
+   */
+  when: <T>(condition: (value: T) => boolean, validator: BindingValidator<T>): BindingValidator<T> => {
+    return (value: T) => {
+      if (!condition(value)) {
+        return true;
+      }
+      return validator(value);
+    };
+  }
+};
+
+/**
+ * Helper functions for creating custom transformers
+ */
+export const createTransformer = {
+  /**
+   * Chain multiple transformers together
+   */
+  chain: <T, U, V>(first: BindingTransformer<T, U>, second: BindingTransformer<U, V>): BindingTransformer<T, V> => {
+    return (value: T) => second(first(value));
+  },
+  
+  /**
+   * Create a conditional transformer
+   */
+  when: <T>(condition: (value: T) => boolean, transformer: BindingTransformer<T, T>): BindingTransformer<T, T> => {
+    return (value: T) => condition(value) ? transformer(value) : value;
   }
 };

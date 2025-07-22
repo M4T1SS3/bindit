@@ -399,6 +399,8 @@ export {
   createBindingStore, 
   transformers, 
   validators,
+  createValidator,
+  createTransformer,
   type Binding,
   type BindingConfig,
   type BindingStore

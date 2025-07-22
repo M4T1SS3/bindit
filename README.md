@@ -4,7 +4,7 @@
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-green.svg)](https://reactjs.org/)
-[![Size](https://img.shields.io/badge/Size-5KB-success.svg)](#)
+[![Size](https://img.shields.io/badge/Size-5.6KB-success.svg)](#)
 
 ```bash
 npm install bindit-react bindit-core
@@ -193,7 +193,7 @@ const name = useBind(store, 'name');
 - **Performance**: Only re-renders what changed
 - **Validation**: Smart timing (touch, change, submit)
 - **Edge cases**: IME, rapid typing, cursor position - all handled
-- **Bundle size**: 5.0KB total
+- **Bundle size**: 5.6KB total
 
 ### Available Validators
 ```tsx
@@ -213,12 +213,64 @@ transformers.toLowerCase  // Convert to lowercase
 transformers.toUpperCase  // Convert to uppercase
 ```
 
+### Custom Validators & Transformers
+
+**Write your own validators:**
+```tsx
+// Custom validator function
+const isStrongPassword = (value: string): boolean | string => {
+  if (value.length < 8) return 'Password must be at least 8 characters';
+  if (!/[A-Z]/.test(value)) return 'Password must contain uppercase letter';
+  if (!/[0-9]/.test(value)) return 'Password must contain a number';
+  return true;
+};
+
+// Use it with useBind
+const password = useBind(store, 'password', { 
+  validate: isStrongPassword 
+});
+
+// Combine multiple validators
+const email = useBind(store, 'email', {
+  validate: createValidator.all(
+    validators.required,
+    validators.email,
+    (value) => !value.includes('+') || 'No + symbols allowed'
+  )
+});
+```
+
+**Write your own transformers:**
+```tsx
+// Custom transformer function
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length >= 10) {
+    return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6,10)}`;
+  }
+  return value;
+};
+
+// Use it with useBind
+const phone = useBind(store, 'phone', { 
+  transform: formatPhoneNumber 
+});
+
+// Chain multiple transformers
+const username = useBind(store, 'username', {
+  transform: createTransformer.chain(
+    transformers.trim,
+    transformers.toLowerCase
+  )
+});
+```
+
 ## 📦 Bundle Size
 | Package | Size (gzipped) |
 |---------|------|
-| `bindit-core` | 1.6KB |
-| `bindit-react` | 3.4KB |
-| **Total** | **5.0KB** |
+| `bindit-core` | 1.9KB |
+| `bindit-react` | 3.7KB |
+| **Total** | **5.6KB** |
 
 ---
 
